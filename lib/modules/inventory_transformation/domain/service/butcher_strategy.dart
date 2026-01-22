@@ -4,6 +4,7 @@ import 'package:item_task/modules/inventory_transformation/domain/service/transf
 import 'package:item_task/modules/inventory_transformation/domain/service/strategy_metadata.dart';
 import 'package:item_task/common/core/domain/entities/stockable.dart';
 import 'package:item_task/common/core/domain/entities/categorizable.dart';
+import 'package:injectable/injectable.dart';
 
 /// Professional Whole Chicken Butchery Strategy
 ///
@@ -16,6 +17,8 @@ import 'package:item_task/common/core/domain/entities/categorizable.dart';
 /// - Wings: ~10%
 /// - Carcass/Rack (Used for Stock): ~25%
 /// - Skin, Fat, Trim (Waste/Rendering): ~10%
+@Named('butcher')
+@Injectable(as: ITransformationStrategy)
 class ButcheryStrategy implements ITransformationStrategy {
   @override
   StrategyMetadata get metadata => const StrategyMetadata(

@@ -2,20 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:item_task/modules/inventory_transformation/domain/entities/inventory_item.dart';
 import 'package:item_task/modules/inventory_transformation/domain/service/transformation_strategy.dart';
 import 'package:item_task/modules/inventory_transformation/domain/service/strategy_metadata.dart';
-import 'package:item_task/modules/inventory_transformation/domain/service/strategy_plugin_registry.dart';
 import 'package:item_task/common/core/domain/entities/stockable.dart';
 import 'package:item_task/common/core/domain/entities/categorizable.dart';
+import 'package:injectable/injectable.dart';
 
 /// Example: Juice extraction strategy for fruits
 /// This is a SELF-REGISTERING plugin - no factory modification needed!
+@Named('juice')
+@Injectable(as: ITransformationStrategy)
 class JuiceStrategy implements ITransformationStrategy {
-  // Auto-register this strategy when the class is loaded
-  // ignore: unused_field
-  static final _registered = (() {
-    StrategyPluginRegistry.register(JuiceStrategy());
-    return true;
-  })();
-
   @override
   StrategyMetadata get metadata => const StrategyMetadata(
     key: 'juice',

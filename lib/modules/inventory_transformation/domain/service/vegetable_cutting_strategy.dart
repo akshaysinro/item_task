@@ -4,7 +4,10 @@ import 'package:item_task/modules/inventory_transformation/domain/service/transf
 import 'package:item_task/modules/inventory_transformation/domain/service/strategy_metadata.dart';
 import 'package:item_task/common/core/domain/entities/stockable.dart';
 import 'package:item_task/common/core/domain/entities/categorizable.dart';
+import 'package:injectable/injectable.dart';
 
+@Named('veg_cut')
+@Injectable(as: ITransformationStrategy)
 class VegetableCuttingStrategy implements ITransformationStrategy {
   @override
   StrategyMetadata get metadata => const StrategyMetadata(

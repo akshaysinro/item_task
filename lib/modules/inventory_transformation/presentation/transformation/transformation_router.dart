@@ -10,10 +10,6 @@ import '../../domain/service/transformation_strategy_factory.dart';
 import '../../domain/service/strategy_filter_service.dart';
 import 'bloc/transformation_bloc.dart';
 
-// Import plugin strategies to trigger auto-registration
-// ignore: unused_import
-import '../../domain/service/juice_strategy.dart';
-
 // Restaurant cut strategies
 // ignore: unused_import
 

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:item_task/modules/inventory_transformation/presentation/transformation/transformation_router.dart';
+import 'package:item_task/injection.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  configureDependencies();
   runApp(const MyApp());
 }
 
