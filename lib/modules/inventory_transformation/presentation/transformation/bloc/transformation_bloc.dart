@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../transformation_interactor.dart';
 import '../../../domain/service/i_strategy_filter_service.dart';
+import '../../../domain/service/transformation_strategy.dart';
 import 'transformation_event.dart';
 import 'transformation_state.dart';
 
@@ -16,6 +17,10 @@ class TransformationBloc
   }) : super(const TransformationInitial()) {
     on<LoadItemsEvent>(_onLoadItems);
     on<TransformItemEvent>(_onTransformItem);
+  }
+
+  ITransformationStrategy? getStrategy(String key) {
+    return strategyFilterService.strategies[key];
   }
 
   Future<void> _onLoadItems(

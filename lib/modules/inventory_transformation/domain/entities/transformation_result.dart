@@ -1,5 +1,5 @@
 import '../../../../common/core/domain/entities/stockable.dart';
-import '../entities/inventory_item.dart';
+import 'transformation_result_processor.dart';
 
 /// Result of a transformation operation
 /// Contains outputs, by-products, waste, and summary statistics
@@ -20,57 +20,42 @@ class TransformationResult {
 
   /// Main outputs (meat_cuts category)
   List<Stockable> get mainOutputs =>
-      outputs.where((item) => _isMainOutput(item)).toList();
+      TransformationResultProcessor.getMainOutputs(this);
 
   /// By-products (by_products category, not waste)
   List<Stockable> get byProducts =>
-      outputs.where((item) => _isByProduct(item)).toList();
+      TransformationResultProcessor.getByProducts(this);
 
   /// Actual waste items (isWaste = true)
   List<Stockable> get wasteItems => waste;
 
-  bool _isMainOutput(Stockable item) {
-    if (item is InventoryItem) {
-      return item.category == 'meat_cuts' ||
-          item.category == 'beverage' ||
-          (!item.isWaste && item.category != 'by_products');
-    }
-    return true;
-  }
-
-  bool _isByProduct(Stockable item) {
-    if (item is InventoryItem) {
-      return item.category == 'by_products' && !item.isWaste;
-    }
-    return false;
-  }
-
   /// Total output quantity (excluding waste)
   double get totalOutputQuantity =>
-      outputs.fold(0.0, (sum, item) => sum + item.quantity);
+      TransformationResultProcessor.getTotalOutputQuantity(this);
 
   /// Total waste quantity
   double get totalWasteQuantity =>
-      waste.fold(0.0, (sum, item) => sum + item.quantity);
+      TransformationResultProcessor.getTotalWasteQuantity(this);
 
   /// Yield percentage (output / input * 100)
   double get yieldPercentage =>
-      (totalOutputQuantity / quantityTransformed) * 100;
+      TransformationResultProcessor.getYieldPercentage(this);
 
   /// Waste percentage (waste / input * 100)
   double get wastePercentage =>
-      (totalWasteQuantity / quantityTransformed) * 100;
+      TransformationResultProcessor.getWastePercentage(this);
 
   /// Total cost allocated to outputs
   double get totalOutputCost =>
-      outputs.fold(0.0, (sum, item) => sum + item.cost);
+      TransformationResultProcessor.getTotalOutputCost(this);
 
   /// Number of main output items
-  int get outputCount => mainOutputs.length;
+  int get outputCount => TransformationResultProcessor.getOutputCount(this);
 
   /// Number of by-product items
-  int get byProductCount => byProducts.length;
+  int get byProductCount =>
+      TransformationResultProcessor.getByProductCount(this);
 
   /// Number of waste items
-  int get wasteCount => waste.length;
+  int get wasteCount => TransformationResultProcessor.getWasteCount(this);
 }

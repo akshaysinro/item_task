@@ -166,7 +166,7 @@ class TransformationScreen extends StatelessWidget {
 
     // Get strategy from BLoC
     final bloc = context.read<TransformationBloc>();
-    final strategy = bloc.strategyFilterService.strategies[metadata.key];
+    final strategy = bloc.getStrategy(metadata.key);
 
     if (strategy == null) {
       if (context.mounted) {
