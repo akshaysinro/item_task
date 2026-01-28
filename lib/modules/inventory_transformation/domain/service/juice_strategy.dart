@@ -2,7 +2,6 @@ import 'package:item_task/modules/inventory_transformation/domain/entities/inven
 import 'package:item_task/modules/inventory_transformation/domain/service/transformation_strategy.dart';
 import 'package:item_task/modules/inventory_transformation/domain/service/strategy_metadata.dart';
 import 'package:item_task/common/core/domain/entities/stockable.dart';
-import 'package:item_task/common/core/domain/entities/categorizable.dart';
 import 'package:injectable/injectable.dart';
 import 'transformation_configuration.dart';
 
@@ -22,8 +21,7 @@ class JuiceStrategy implements ITransformationStrategy {
   );
 
   @override
-  bool canExecute(Categorizable input) =>
-      input.category == config.inputCategory;
+  bool canExecute(Stockable input) => config.matches(input);
 
   @override
   List<Stockable> execute(Stockable input) {

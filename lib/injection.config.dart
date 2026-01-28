@@ -14,10 +14,6 @@ import 'package:injectable/injectable.dart' as _i526;
 
 import 'modules/inventory_transformation/domain/service/beef_butchery_strategy.dart'
     as _i232;
-import 'modules/inventory_transformation/domain/service/butcher_strategy.dart'
-    as _i1032;
-import 'modules/inventory_transformation/domain/service/butchery_configuration.dart'
-    as _i539;
 import 'modules/inventory_transformation/domain/service/chicken_butchery_strategy.dart'
     as _i1061;
 import 'modules/inventory_transformation/domain/service/juice_strategy.dart'
@@ -48,10 +44,6 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i788.BeefButcheryConfiguration(),
       instanceName: 'beef_butchery',
     );
-    gh.factory<_i539.IButcheryConfiguration>(
-      () => _i539.WholeChickenConfiguration(),
-      instanceName: 'whole_chicken',
-    );
     gh.factory<_i228.ITransformationStrategy>(
       () => _i520.JuiceStrategy(
         gh<_i788.ITransformationConfiguration>(
@@ -71,12 +63,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i788.ITransformationConfiguration>(
       () => _i788.WholeChickenConfiguration(),
       instanceName: 'whole_chicken',
-    );
-    gh.factory<_i228.ITransformationStrategy>(
-      () => _i1032.ButcheryStrategy(
-        gh<_i788.ITransformationConfiguration>(instanceName: 'whole_chicken'),
-      ),
-      instanceName: 'butcher',
     );
     gh.factory<_i228.ITransformationStrategy>(
       () => _i1061.ChickenButcheryStrategy(

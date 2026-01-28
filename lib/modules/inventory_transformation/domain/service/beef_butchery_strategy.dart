@@ -10,8 +10,4 @@ class BeefButcheryStrategy extends BaseButcheryStrategy {
   final ITransformationConfiguration config;
 
   BeefButcheryStrategy(@Named('beef_butchery') this.config);
-
-  @override
-  bool matchesSpecies(String itemName) =>
-      itemName.contains('beef') || itemName.contains('cow');
 }

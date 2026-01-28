@@ -1,3 +1,4 @@
+import 'package:item_task/common/core/domain/entities/stockable.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 
@@ -28,6 +29,7 @@ abstract class ITransformationConfiguration {
   IconData get icon;
   String get inputCategory;
   List<YieldConfig> get yields;
+  bool matches(Stockable item);
 }
 
 @Named('whole_chicken')
@@ -35,14 +37,24 @@ abstract class ITransformationConfiguration {
 class WholeChickenConfiguration implements ITransformationConfiguration {
   @override
   String get key => 'butcher_whole_chicken';
+
   @override
   String get label => 'Break Down Whole Chicken';
+
   @override
   Color get color => const Color(0xFFD2691E);
+
   @override
   IconData get icon => Icons.restaurant;
+
   @override
   String get inputCategory => 'meat';
+
+  @override
+  bool matches(Stockable item) =>
+      item.category == inputCategory &&
+      (item.name.toLowerCase().contains('chicken') ||
+          item.name.toLowerCase().contains('bird'));
 
   @override
   List<YieldConfig> get yields => const [
@@ -90,14 +102,24 @@ class WholeChickenConfiguration implements ITransformationConfiguration {
 class BeefButcheryConfiguration implements ITransformationConfiguration {
   @override
   String get key => 'butcher_beef';
+
   @override
   String get label => 'Break Down Beef Slab';
+
   @override
   Color get color => const Color(0xFF8B0000);
+
   @override
   IconData get icon => Icons.restaurant;
+
   @override
   String get inputCategory => 'meat';
+
+  @override
+  bool matches(Stockable item) =>
+      item.category == inputCategory &&
+      (item.name.toLowerCase().contains('beef') ||
+          item.name.toLowerCase().contains('cow'));
 
   @override
   List<YieldConfig> get yields => const [
@@ -145,14 +167,21 @@ class BeefButcheryConfiguration implements ITransformationConfiguration {
 class JuiceConfiguration implements ITransformationConfiguration {
   @override
   String get key => 'juice';
+
   @override
   String get label => 'Juice';
+
   @override
   Color get color => const Color(0xFFF59E0B);
+
   @override
   IconData get icon => Icons.local_drink;
+
   @override
   String get inputCategory => 'fruit';
+
+  @override
+  bool matches(Stockable item) => item.category == inputCategory;
 
   @override
   List<YieldConfig> get yields => const [
@@ -180,14 +209,22 @@ class JuiceConfiguration implements ITransformationConfiguration {
 class VegetableConfiguration implements ITransformationConfiguration {
   @override
   String get key => 'veg_cut';
+
   @override
   String get label => 'Cut';
+
   @override
   Color get color => const Color(0xFF10B981);
+
   @override
   IconData get icon => Icons.content_cut;
+
   @override
   String get inputCategory => 'vegetable';
+
+  @override
+  bool matches(Stockable item) =>
+      item.category == inputCategory || item.category == 'veg';
 
   @override
   List<YieldConfig> get yields => const [

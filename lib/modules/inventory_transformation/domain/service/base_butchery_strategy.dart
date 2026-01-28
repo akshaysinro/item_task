@@ -1,10 +1,7 @@
-import 'package:meta/meta.dart';
 import 'package:item_task/modules/inventory_transformation/domain/entities/inventory_item.dart';
 import 'package:item_task/modules/inventory_transformation/domain/service/transformation_strategy.dart';
 import 'package:item_task/modules/inventory_transformation/domain/service/strategy_metadata.dart';
 import 'package:item_task/common/core/domain/entities/stockable.dart';
-import 'package:item_task/common/core/domain/entities/categorizable.dart';
-import 'package:item_task/common/core/domain/entities/named.dart';
 import 'transformation_configuration.dart';
 
 /// Base class for animal butchery strategies to share common yield calculation logic
@@ -20,18 +17,7 @@ abstract class BaseButcheryStrategy implements ITransformationStrategy {
   );
 
   @override
-  bool canExecute(Categorizable input) {
-    if (input.category != 'meat') return false;
-
-    if (input is Named) {
-      return matchesSpecies(input.name.toLowerCase());
-    }
-
-    return false;
-  }
-
-  @protected
-  bool matchesSpecies(String itemName);
+  bool canExecute(Stockable input) => config.matches(input);
 
   @override
   List<Stockable> execute(Stockable input) {

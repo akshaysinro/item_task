@@ -6,90 +6,80 @@ The Inventory Transformation module enables the conversion of raw ingredients in
 
 ## Core Architecture
 
-The module utilizes the **Strategy Pattern** to handle different types of processing logic (Butchery, Cutting, Juicing) in a decoupled and extensible manner.
+The module utilizes a **Configuration-Driven Strategy Pattern** to handle different types of processing logic in a decoupled and extensible manner.
 
 ```mermaid
 classDiagram
     class ITransformationStrategy {
         <<interface>>
         +metadata StrategyMetadata
-        +canExecute(Categorizable) bool
+        +canExecute(Stockable) bool
         +execute(Stockable) List<Stockable>
     }
-    class ButcheryStrategy {
+    class BaseButcheryStrategy {
+        <<abstract>>
+        +execute() Breakdown Meat
+    }
+    class ChickenButcheryStrategy {
+        +matchesSpecies() bool
+    }
+    class BeefButcheryStrategy {
+        +matchesSpecies() bool
+    }
+    class ITransformationConfiguration {
+        <<interface>>
+        +yields List~YieldConfig~
+        +matches(Stockable) bool
+    }
 
-        +execute() Breakdown Whole Chicken
-    }
-    class VegetableCuttingStrategy {
-        +execute() Process Veg
-    }
-    class JuiceStrategy {
-        +execute() Extract Juice
-    }
-    ITransformationStrategy <|.. ButcheryStrategy
-    ITransformationStrategy <|.. VegetableCuttingStrategy
-    ITransformationStrategy <|.. JuiceStrategy
+    ITransformationStrategy <|.. BaseButcheryStrategy
+    BaseButcheryStrategy <|-- ChickenButcheryStrategy
+    BaseButcheryStrategy <|-- BeefButcheryStrategy
+    ITransformationStrategy <.. ITransformationConfiguration : uses
 ```
 
 ## Transformation Process Flow
 
 1.  **Item Discovery**: The `TransformationBloc` loads items from the `ITransformationRepository`.
-2.  **Capability Filtering**: The `StrategyFilterService` identifies which strategies can be applied to each item based on its `category`.
+2.  **Capability Filtering**: The `StrategyFilterService` identifies supported strategies. Each strategy delegates its applicability check to an `ITransformationConfiguration` via the `matches(Stockable)` method.
 3.  **Transformation Execution**:
     - The user provides an input quantity.
-    - The selected `ITransformationStrategy` executes, calculating:
-      - **Main Outputs**: High-value processed items.
-      - **By-products**: Secondary usable items (e.g., bones for stock).
-      - **Waste**: Non-usable materials (skin, trim).
-4.  **Result Review**: The `TransformationResultScreen` displays the calculated yields and costs.
-5.  **Manual Adjustment**: Chefs can edit the final quantities of outputs to account for real-world variance.
-6.  **Stock Synchronization**: The `UpdateStockEvent` persists the transformation by:
-    - Adding new processed items to inventory.
-    - Updating existing stock levels.
-    - Marking the transformation record as complete.
+    - The strategy calculates yields and costs based on the `YieldConfig` provided by its configuration.
+    - **Polymorphic Costing**: Premium cuts absorb more cost based on their `costFactor`.
+    - **Waste Identification**: Items marked `isWaste: true` have their costs zeroed out automatically.
+4.  **Result Review**: The `TransformationResult` entity (Rich Domain Model) calculates yield statistics (yield %, waste %) automatically.
+5.  **Stock Synchronization**: The processed items are saved back to the repository as new `Stockable` entries.
 
-## Key Strategies & Logic
+## Key Principles & Patterns
 
-### Butchery Strategy
+### 1. Configuration-Driven OCP
 
-- **Yield Logic**: Uses restaurant-standard percentage breakdowns (30% legs, 25% breast, etc.).
-- **Cost Allocation**: Implements weighted cost allocation where premium cuts (breast) absorb more of the raw material cost than by-products (bones).
+The system is **Open for Extension but Closed for Modification**. To add a new transformation (e.g., Fish Butchery), you simply create a new `ITransformationConfiguration`. No changes to the `ButcheryStrategy` logic are required.
 
-### Vegetable & Fruit Processing
+### 2. Liskov Substitution (LSP)
 
-- Handles simple processing like dicing or juicing.
-- Flexible category matching (handles both `veg` and `vegetable`).
+All transformation logic operates on the `Stockable` and `Wasteable` abstractions. The system treats all items uniformly, whether they are raw ingredients, processed cuts, or waste products.
+
+### 3. Dependency Inversion (DIP)
+
+High-level modules (BLoC, UseCases) depend on interfaces (`ITransformationStrategy`, `ITransformationRepository`) rather than concrete implementations.
 
 ## Extensibility
 
-### Adding New Strategies (Auto-registration)
+### Adding New Strategies
 
-The system uses **Dependency Injection (DI)** with `get_it` and `injectable` for automatic discovery of strategies. New strategies are registered without modifying any factory or central registry file.
+The system uses **Dependency Injection (DI)** for automatic discovery. New strategies and configurations are registered automatically.
 
-To add a new strategy:
-
-1.  **Create the class**: Implement `ITransformationStrategy`.
-2.  **Add Annotations**:
-    - Use `@Named('your_unique_key')` to provide a unique identifier.
-    - Use `@Injectable(as: ITransformationStrategy)` to register it as a strategy implementation.
-3.  **Generate Code**: Run the build runner to update the DI container:
+1.  **Create Configuration**: Implement `ITransformationConfiguration` with your yields and matching rules.
+2.  **Create Strategy**: Implement `ITransformationStrategy` (or extend `BaseButcheryStrategy`).
+3.  **Generate Code**: Update the DI container:
     ```bash
     flutter pub run build_runner build --delete-conflicting-outputs
     ```
 
-```dart
-@Named('slicing')
-@Injectable(as: ITransformationStrategy)
-class SlicingStrategy implements ITransformationStrategy {
-  // ... implementation ...
-}
-```
-
-### Factory Resolution
-
-The `TransformationStrategyFactory` automatically resolves all registered `ITransformationStrategy` implementations from the DI container using `GetIt.instance.getAll<ITransformationStrategy>()`.
-
 ## Data Entities
 
-- **InventoryItem**: Implementation of `Stockable` and `Categorizable`.
-- **TransformationResult**: A container for the outcome of a process, including timestamp, yield statistics, and output lists.
+- **Stockable**: Base interface for all inventory items.
+- **Wasteable**: Core interface for items that represent waste (defines `isWaste`).
+- **InventoryItem**: Concrete implementation of `Stockable` and `Wasteable`.
+- **TransformationResult**: Rich entity containing yields, costs, and summary statistics.

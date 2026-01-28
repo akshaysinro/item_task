@@ -10,8 +10,4 @@ class ChickenButcheryStrategy extends BaseButcheryStrategy {
   final ITransformationConfiguration config;
 
   ChickenButcheryStrategy(@Named('whole_chicken') this.config);
-
-  @override
-  bool matchesSpecies(String itemName) =>
-      itemName.contains('chicken') || itemName.contains('bird');
 }
