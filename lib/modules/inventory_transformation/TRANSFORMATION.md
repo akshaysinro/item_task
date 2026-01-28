@@ -17,6 +17,7 @@ classDiagram
         +execute(Stockable) List<Stockable>
     }
     class ButcheryStrategy {
+
         +execute() Breakdown Whole Chicken
     }
     class VegetableCuttingStrategy {

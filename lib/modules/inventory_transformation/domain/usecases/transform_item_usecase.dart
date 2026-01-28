@@ -22,7 +22,8 @@ class TransformItemUseCase implements ITransformItemUseCase {
     // Execute transformation
     final results = strategy.execute(partialInput);
 
-    // Separate outputs and waste
+    // Separate outputs and waste based on Stockable properties
+    // (Assuming isWaste is part of a more specialized interface or we check it safely)
     final outputs = <Stockable>[];
     final waste = <Stockable>[];
 

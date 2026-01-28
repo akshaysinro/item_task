@@ -49,9 +49,16 @@ class TransformationBloc
   ) async {
     emit(const TransformationLoading());
     try {
+      final strategy = strategyFilterService.strategies[event.strategyKey];
+      if (strategy == null) {
+        emit(const TransformationError(message: 'Strategy not found'));
+        add(const LoadItemsEvent());
+        return;
+      }
+
       final result = await interactor.transformItem(
         event.item,
-        event.strategy,
+        strategy,
         event.quantity,
       );
 

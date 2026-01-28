@@ -164,25 +164,16 @@ class TransformationScreen extends StatelessWidget {
       return; // User cancelled
     }
 
-    // Get strategy from BLoC
+    // Get BLoC
     final bloc = context.read<TransformationBloc>();
-    final strategy = bloc.getStrategy(metadata.key);
 
-    if (strategy == null) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Strategy not found'),
-            backgroundColor: Colors.redAccent,
-          ),
-        );
-      }
-      return;
-    }
-
-    // Emit transform event
+    // Emit transform event with strategy key
     bloc.add(
-      TransformItemEvent(item: item, strategy: strategy, quantity: quantity),
+      TransformItemEvent(
+        item: item,
+        strategyKey: metadata.key,
+        quantity: quantity,
+      ),
     );
   }
 }
