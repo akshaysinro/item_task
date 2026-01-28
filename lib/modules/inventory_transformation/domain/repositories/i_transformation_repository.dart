@@ -1,7 +1,6 @@
-import '../entities/inventory_item.dart';
-import '../../../../common/core/domain/entities/stockable.dart';
+import 'package:item_task/common/core/domain/entities/stockable.dart';
 
 abstract class ITransformationRepository {
-  Future<List<InventoryItem>> getStockItems();
+  Future<List<Stockable>> getStockItems();
   Future<void> saveTransformationResult(List<Stockable> results);
 }

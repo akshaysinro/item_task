@@ -1,9 +1,8 @@
 import 'package:equatable/equatable.dart';
-import '../../../domain/entities/inventory_item.dart';
+import 'package:item_task/common/core/domain/entities/stockable.dart';
 import '../../../domain/service/strategy_metadata.dart';
 import '../../../domain/entities/transformation_result.dart';
 
-/// Base class for all transformation states
 abstract class TransformationState extends Equatable {
   const TransformationState();
 
@@ -11,19 +10,16 @@ abstract class TransformationState extends Equatable {
   List<Object?> get props => [];
 }
 
-/// Initial state
 class TransformationInitial extends TransformationState {
   const TransformationInitial();
 }
 
-/// Loading state
 class TransformationLoading extends TransformationState {
   const TransformationLoading();
 }
 
-/// Items loaded successfully
 class TransformationLoaded extends TransformationState {
-  final List<InventoryItem> items;
+  final List<Stockable> items;
   final Map<String, List<StrategyMetadata>> itemStrategies;
 
   const TransformationLoaded({
@@ -35,7 +31,6 @@ class TransformationLoaded extends TransformationState {
   List<Object?> get props => [items, itemStrategies];
 }
 
-/// Transformation completed successfully
 class TransformationSuccess extends TransformationState {
   final TransformationResult result;
 
@@ -45,7 +40,6 @@ class TransformationSuccess extends TransformationState {
   List<Object?> get props => [result];
 }
 
-/// Error state
 class TransformationError extends TransformationState {
   final String message;
 

@@ -1,17 +1,15 @@
+import 'package:meta/meta.dart';
 import 'package:item_task/modules/inventory_transformation/domain/entities/inventory_item.dart';
 import 'package:item_task/modules/inventory_transformation/domain/service/transformation_strategy.dart';
 import 'package:item_task/modules/inventory_transformation/domain/service/strategy_metadata.dart';
 import 'package:item_task/common/core/domain/entities/stockable.dart';
 import 'package:item_task/common/core/domain/entities/categorizable.dart';
-import 'package:injectable/injectable.dart';
+import 'package:item_task/common/core/domain/entities/named.dart';
 import 'transformation_configuration.dart';
 
-@Named('juice')
-@Injectable(as: ITransformationStrategy)
-class JuiceStrategy implements ITransformationStrategy {
-  final ITransformationConfiguration config;
-
-  JuiceStrategy(@Named('juice_extraction') this.config);
+/// Base class for animal butchery strategies to share common yield calculation logic
+abstract class BaseButcheryStrategy implements ITransformationStrategy {
+  ITransformationConfiguration get config;
 
   @override
   StrategyMetadata get metadata => StrategyMetadata(
@@ -22,8 +20,18 @@ class JuiceStrategy implements ITransformationStrategy {
   );
 
   @override
-  bool canExecute(Categorizable input) =>
-      input.category == config.inputCategory;
+  bool canExecute(Categorizable input) {
+    if (input.category != 'meat') return false;
+
+    if (input is Named) {
+      return matchesSpecies(input.name.toLowerCase());
+    }
+
+    return false;
+  }
+
+  @protected
+  bool matchesSpecies(String itemName);
 
   @override
   List<Stockable> execute(Stockable input) {
@@ -42,7 +50,7 @@ class JuiceStrategy implements ITransformationStrategy {
 
       return InventoryItem(
         id: '${input.id}_${y.suffix}',
-        name: '${input.name} ${y.name}',
+        name: y.name,
         quantity: weight,
         unit: y.unit ?? input.unit,
         category: y.category ?? 'uncategorized',

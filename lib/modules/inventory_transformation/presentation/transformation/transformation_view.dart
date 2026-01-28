@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/entities/inventory_item.dart';
+import 'package:item_task/common/core/domain/entities/stockable.dart';
 import '../../domain/service/strategy_metadata.dart';
 import 'bloc/transformation_bloc.dart';
 import 'bloc/transformation_event.dart';
@@ -34,7 +34,6 @@ class TransformationScreen extends StatelessWidget {
               ),
             );
           } else if (state is TransformationSuccess) {
-            // Navigate to results screen
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) =>
@@ -45,20 +44,15 @@ class TransformationScreen extends StatelessWidget {
         },
         builder: (context, state) {
           if (state is TransformationInitial) {
-            // Trigger initial load
             context.read<TransformationBloc>().add(const LoadItemsEvent());
             return const Center(child: CircularProgressIndicator());
           }
-
           if (state is TransformationLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-
           if (state is TransformationLoaded) {
             return _buildList(context, state.items, state.itemStrategies);
           }
-
-          // Default fallback
           return const Center(child: Text('Something went wrong'));
         },
       ),
@@ -67,7 +61,7 @@ class TransformationScreen extends StatelessWidget {
 
   Widget _buildList(
     BuildContext context,
-    List<InventoryItem> items,
+    List<Stockable> items,
     Map<String, List<StrategyMetadata>> itemStrategies,
   ) {
     if (items.isEmpty) {
@@ -78,7 +72,6 @@ class TransformationScreen extends StatelessWidget {
         ),
       );
     }
-
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: items.length,
@@ -91,7 +84,7 @@ class TransformationScreen extends StatelessWidget {
 
   Widget _buildItemCard(
     BuildContext context,
-    InventoryItem item,
+    Stockable item,
     List<StrategyMetadata> strategies,
   ) {
     return Container(
@@ -147,10 +140,9 @@ class TransformationScreen extends StatelessWidget {
 
   Future<void> _onTransformTapped(
     BuildContext context,
-    InventoryItem item,
+    Stockable item,
     StrategyMetadata metadata,
   ) async {
-    // Show quantity selection dialog
     final quantity = await showDialog<double>(
       context: context,
       builder: (context) => QuantitySelectionDialog(
@@ -159,16 +151,8 @@ class TransformationScreen extends StatelessWidget {
         unit: item.unit,
       ),
     );
-
-    if (quantity == null || !context.mounted) {
-      return; // User cancelled
-    }
-
-    // Get BLoC
-    final bloc = context.read<TransformationBloc>();
-
-    // Emit transform event with strategy key
-    bloc.add(
+    if (quantity == null || !context.mounted) return;
+    context.read<TransformationBloc>().add(
       TransformItemEvent(
         item: item,
         strategyKey: metadata.key,

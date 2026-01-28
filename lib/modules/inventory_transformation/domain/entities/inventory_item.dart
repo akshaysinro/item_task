@@ -14,7 +14,7 @@ class InventoryItem implements Stockable {
   @override
   final String category;
 
-  // Module-specific field
+  @override
   final bool isWaste;
 
   InventoryItem({

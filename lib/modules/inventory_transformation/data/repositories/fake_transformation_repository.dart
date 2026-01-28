@@ -1,6 +1,6 @@
+import 'package:item_task/common/core/domain/entities/stockable.dart';
 import '../../domain/entities/inventory_item.dart';
 import '../../domain/repositories/i_transformation_repository.dart';
-import '../../../../common/core/domain/entities/stockable.dart';
 
 class FakeTransformationRepository implements ITransformationRepository {
   final List<InventoryItem> _dummyItems = [
@@ -20,14 +20,7 @@ class FakeTransformationRepository implements ITransformationRepository {
       unit: 'kg',
       category: 'meat',
     ),
-    InventoryItem(
-      id: '3',
-      name: 'Salmon Fillet Jumbo',
-      quantity: 5.0,
-      cost: 200.0,
-      unit: 'kg',
-      category: 'meat',
-    ),
+
     InventoryItem(
       id: '4',
       name: 'Red Onions',
@@ -55,15 +48,13 @@ class FakeTransformationRepository implements ITransformationRepository {
   ];
 
   @override
-  Future<List<InventoryItem>> getStockItems() async {
-    // Simulate API delay
+  Future<List<Stockable>> getStockItems() async {
     await Future.delayed(const Duration(milliseconds: 500));
     return _dummyItems;
   }
 
   @override
   Future<void> saveTransformationResult(List<Stockable> results) async {
-    // In a real app, this would update the database/API
     print(
       'Saving transformation results: ${results.length} items transformed.',
     );

@@ -4,12 +4,12 @@ import 'package:item_task/modules/inventory_transformation/domain/service/strate
 import 'package:item_task/common/core/domain/entities/stockable.dart';
 import 'package:item_task/common/core/domain/entities/categorizable.dart';
 import 'package:injectable/injectable.dart';
-import 'butchery_configuration.dart';
+import 'transformation_configuration.dart';
 
 @Named('butcher')
 @Injectable(as: ITransformationStrategy)
 class ButcheryStrategy implements ITransformationStrategy {
-  final IButcheryConfiguration config;
+  final ITransformationConfiguration config;
 
   ButcheryStrategy(@Named('whole_chicken') this.config);
 
@@ -46,7 +46,7 @@ class ButcheryStrategy implements ITransformationStrategy {
         id: '${input.id}_${y.suffix}',
         name: y.name,
         quantity: weight,
-        unit: input.unit,
+        unit: y.unit ?? input.unit,
         category: y.category ?? 'uncategorized',
         cost: y.isWaste ? 0 : cost,
         isWaste: y.isWaste,
