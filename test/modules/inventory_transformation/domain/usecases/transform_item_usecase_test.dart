@@ -5,6 +5,7 @@ import 'package:item_task/modules/inventory_transformation/domain/entities/trans
 import 'package:item_task/modules/inventory_transformation/domain/repositories/i_transformation_repository.dart';
 import 'package:item_task/modules/inventory_transformation/domain/service/transformation_strategy.dart';
 import 'package:item_task/modules/inventory_transformation/domain/service/strategy_metadata.dart';
+import 'package:item_task/modules/inventory_transformation/domain/service/transformation_configuration.dart';
 import 'package:item_task/modules/inventory_transformation/domain/usecases/transform_item_usecase.dart';
 
 class MockRepository implements ITransformationRepository {
@@ -48,6 +49,35 @@ class MockStrategy implements ITransformationStrategy {
       ),
     ];
   }
+
+  @override
+  double calculateRequiredInputQuantity(
+    String yieldSuffix,
+    double targetQuantity,
+  ) {
+    if (yieldSuffix == 'output_1') return targetQuantity / 0.8;
+    if (yieldSuffix == 'waste_1') return targetQuantity / 0.2;
+    return 0.0;
+  }
+
+  @override
+  List<YieldConfig> get yields => const [
+    YieldConfig(
+      suffix: 'output_1',
+      name: 'Output 1',
+      weightFactor: 0.8,
+      costFactor: 1.0,
+      category: 'meat_cuts',
+    ),
+    YieldConfig(
+      suffix: 'waste_1',
+      name: 'Waste 1',
+      weightFactor: 0.2,
+      costFactor: 0.0,
+      category: 'waste',
+      isWaste: true,
+    ),
+  ];
 }
 
 void main() {

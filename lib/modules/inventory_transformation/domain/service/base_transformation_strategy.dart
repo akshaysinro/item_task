@@ -20,6 +20,9 @@ abstract class BaseTransformationStrategy implements ITransformationStrategy {
   bool canExecute(Stockable input) => config.matches(input);
 
   @override
+  List<YieldConfig> get yields => config.yields;
+
+  @override
   List<Stockable> execute(Stockable input) {
     final double totalQuantity = input.quantity;
     final double totalCost = input.cost;
@@ -44,6 +47,24 @@ abstract class BaseTransformationStrategy implements ITransformationStrategy {
         isWaste: y.isWaste,
       );
     }).toList();
+  }
+
+  @override
+  double calculateRequiredInputQuantity(
+    String yieldSuffix,
+    double targetQuantity,
+  ) {
+    try {
+      final yield = config.yields.firstWhere((y) => y.suffix == yieldSuffix);
+
+      if (yield.weightFactor <= 0) {
+        return 0.0;
+      }
+
+      return targetQuantity / yield.weightFactor;
+    } catch (_) {
+      return 0.0;
+    }
   }
 
   /// Hook for customizing the generated item name

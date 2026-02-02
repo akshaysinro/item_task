@@ -143,12 +143,18 @@ class TransformationScreen extends StatelessWidget {
     Stockable item,
     StrategyMetadata metadata,
   ) async {
+    final bloc = context.read<TransformationBloc>();
+    final strategy = bloc.getStrategy(metadata.key);
+
+    if (strategy == null) return;
+
     final quantity = await showDialog<double>(
       context: context,
       builder: (context) => QuantitySelectionDialog(
         itemName: item.name,
         availableQuantity: item.quantity,
         unit: item.unit,
+        strategy: strategy,
       ),
     );
     if (quantity == null || !context.mounted) return;

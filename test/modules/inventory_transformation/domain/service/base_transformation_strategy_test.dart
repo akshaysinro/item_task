@@ -125,5 +125,33 @@ void main() {
       final totalCost = results.fold<double>(0, (sum, item) => sum + item.cost);
       expect(totalCost, closeTo(100.0, 0.001));
     });
+
+    group('target-based calculation', () {
+      test('should calculate required input based on target output', () {
+        // Cut 1 weight factor is 0.5. To get 10kg, we need 10 / 0.5 = 20kg
+        final requiredInput = strategy.calculateRequiredInputQuantity(
+          'cut1',
+          10.0,
+        );
+        expect(requiredInput, 20.0);
+      });
+
+      test('should calculate correctly for different factors', () {
+        // Cut 2 weight factor is 0.3. To get 6kg, we need 6 / 0.3 = 20kg
+        final requiredInput = strategy.calculateRequiredInputQuantity(
+          'cut2',
+          6.0,
+        );
+        expect(requiredInput, 20.0);
+      });
+
+      test('should return 0.0 for invalid suffixes', () {
+        final requiredInput = strategy.calculateRequiredInputQuantity(
+          'invalid',
+          10.0,
+        );
+        expect(requiredInput, 0.0);
+      });
+    });
   });
 }
