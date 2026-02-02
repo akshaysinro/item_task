@@ -4,8 +4,8 @@ import 'package:item_task/modules/inventory_transformation/domain/service/strate
 import 'package:item_task/common/core/domain/entities/stockable.dart';
 import 'transformation_configuration.dart';
 
-/// Base class for animal butchery strategies to share common yield calculation logic
-abstract class BaseButcheryStrategy implements ITransformationStrategy {
+/// Base class for configuration-driven transformation strategies
+abstract class BaseTransformationStrategy implements ITransformationStrategy {
   ITransformationConfiguration get config;
 
   @override
@@ -36,7 +36,7 @@ abstract class BaseButcheryStrategy implements ITransformationStrategy {
 
       return InventoryItem(
         id: '${input.id}_${y.suffix}',
-        name: y.name,
+        name: formatResultName(input, y),
         quantity: weight,
         unit: y.unit ?? input.unit,
         category: y.category ?? 'uncategorized',
@@ -44,5 +44,10 @@ abstract class BaseButcheryStrategy implements ITransformationStrategy {
         isWaste: y.isWaste,
       );
     }).toList();
+  }
+
+  /// Hook for customizing the generated item name
+  String formatResultName(Stockable input, YieldConfig yield) {
+    return yield.name;
   }
 }

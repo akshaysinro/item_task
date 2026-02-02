@@ -16,15 +16,15 @@ classDiagram
         +canExecute(Stockable) bool
         +execute(Stockable) List<Stockable>
     }
-    class BaseButcheryStrategy {
+    class BaseTransformationStrategy {
         <<abstract>>
-        +execute() Breakdown Meat
+        +execute() Generic Transformation Logic
     }
     class ChickenButcheryStrategy {
-        +matchesSpecies() bool
+        +config WholeChickenConfiguration
     }
     class BeefButcheryStrategy {
-        +matchesSpecies() bool
+        +config BeefButcheryConfiguration
     }
     class ITransformationConfiguration {
         <<interface>>
@@ -32,9 +32,9 @@ classDiagram
         +matches(Stockable) bool
     }
 
-    ITransformationStrategy <|.. BaseButcheryStrategy
-    BaseButcheryStrategy <|-- ChickenButcheryStrategy
-    BaseButcheryStrategy <|-- BeefButcheryStrategy
+    ITransformationStrategy <|.. BaseTransformationStrategy
+    BaseTransformationStrategy <|-- ChickenButcheryStrategy
+    BaseTransformationStrategy <|-- BeefButcheryStrategy
     ITransformationStrategy <.. ITransformationConfiguration : uses
 ```
 
@@ -71,7 +71,7 @@ High-level modules (BLoC, UseCases) depend on interfaces (`ITransformationStrate
 The system uses **Dependency Injection (DI)** for automatic discovery. New strategies and configurations are registered automatically.
 
 1.  **Create Configuration**: Implement `ITransformationConfiguration` with your yields and matching rules.
-2.  **Create Strategy**: Implement `ITransformationStrategy` (or extend `BaseButcheryStrategy`).
+2.  **Create Strategy**: Implement `ITransformationStrategy` (or extend `BaseTransformationStrategy`).
 3.  **Generate Code**: Update the DI container:
     ```bash
     flutter pub run build_runner build --delete-conflicting-outputs

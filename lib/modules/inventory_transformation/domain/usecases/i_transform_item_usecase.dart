@@ -7,5 +7,6 @@ abstract class ITransformItemUseCase {
     required Stockable input,
     required ITransformationStrategy strategy,
     required double quantity,
+    String? batchId,
   });
 }

@@ -60,6 +60,7 @@ class TransformationBloc
         event.item,
         strategy,
         event.quantity,
+        batchId: event.batchId,
       );
 
       emit(TransformationSuccess(result: result));

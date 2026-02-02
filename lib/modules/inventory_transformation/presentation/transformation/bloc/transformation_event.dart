@@ -16,13 +16,15 @@ class TransformItemEvent extends TransformationEvent {
   final Stockable item;
   final String strategyKey;
   final double quantity;
+  final String? batchId;
 
   const TransformItemEvent({
     required this.item,
     required this.strategyKey,
     required this.quantity,
+    this.batchId,
   });
 
   @override
-  List<Object?> get props => [item, strategyKey, quantity];
+  List<Object?> get props => [item, strategyKey, quantity, batchId];
 }

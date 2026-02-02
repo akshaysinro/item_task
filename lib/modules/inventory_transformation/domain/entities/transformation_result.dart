@@ -3,6 +3,8 @@ import 'package:item_task/common/core/domain/entities/stockable.dart';
 /// Result of a transformation operation
 /// Contains outputs, by-products, waste, and summary statistics
 class TransformationResult {
+  final String id;
+  final String? batchId;
   final Stockable originalItem;
   final double quantityTransformed;
   final List<Stockable> outputs;
@@ -10,6 +12,8 @@ class TransformationResult {
   final DateTime timestamp;
 
   TransformationResult({
+    required this.id,
+    this.batchId,
     required this.originalItem,
     required this.quantityTransformed,
     required this.outputs,

@@ -9,8 +9,9 @@ abstract class ITransformationInteractor {
   Future<TransformationResult> transformItem(
     Stockable item,
     ITransformationStrategy strategy,
-    double quantity,
-  );
+    double quantity, {
+    String? batchId,
+  });
 }
 
 class TransformationInteractor implements ITransformationInteractor {
@@ -31,12 +32,14 @@ class TransformationInteractor implements ITransformationInteractor {
   Future<TransformationResult> transformItem(
     Stockable item,
     ITransformationStrategy strategy,
-    double quantity,
-  ) {
+    double quantity, {
+    String? batchId,
+  }) {
     return transformUseCase(
       input: item,
       strategy: strategy,
       quantity: quantity,
+      batchId: batchId,
     );
   }
 }

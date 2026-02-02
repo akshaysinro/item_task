@@ -115,6 +115,16 @@ class TransformationResultScreen extends StatelessWidget {
             '${result.quantityTransformed} ${result.originalItem.unit}',
             Icons.scale_outlined,
           ),
+          const Divider(height: 24),
+          _buildInfoRow('Transformation ID', result.id, Icons.fingerprint),
+          if (result.batchId != null) ...[
+            const SizedBox(height: 12),
+            _buildInfoRow(
+              'Batch ID',
+              result.batchId!,
+              Icons.batch_prediction_outlined,
+            ),
+          ],
         ],
       ),
     );
