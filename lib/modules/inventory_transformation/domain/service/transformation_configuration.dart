@@ -204,6 +204,48 @@ class JuiceConfiguration implements ITransformationConfiguration {
   ];
 }
 
+@Named('milk_transformation')
+@Injectable(as: ITransformationConfiguration)
+class MilkConfiguration implements ITransformationConfiguration {
+  @override
+  String get key => 'milk';
+
+  @override
+  String get label => 'milk';
+
+  @override
+  Color get color => const Color(0xFFF59E08);
+
+  @override
+  IconData get icon => Icons.local_drink;
+
+  @override
+  String get inputCategory => 'diary';
+
+  @override
+  bool matches(Stockable item) => item.category == inputCategory;
+
+  @override
+  List<YieldConfig> get yields => const [
+    YieldConfig(
+      suffix: 'Curd',
+      name: 'Curd',
+      weightFactor: 0.70,
+      costFactor: 1.0,
+      category: 'diary',
+      unit: 'liters',
+    ),
+    YieldConfig(
+      suffix: 'waste',
+      name: 'waste',
+      weightFactor: 0.30,
+      costFactor: 0.0,
+      category: 'waste',
+      isWaste: true,
+    ),
+  ];
+}
+
 @Named('vegetable_cutting')
 @Injectable(as: ITransformationConfiguration)
 class VegetableConfiguration implements ITransformationConfiguration {

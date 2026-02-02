@@ -45,6 +45,14 @@ class FakeTransformationRepository implements ITransformationRepository {
       unit: 'kg',
       category: 'fruit',
     ),
+    InventoryItem(
+      id: '7',
+      name: 'Milk',
+      quantity: 20.0,
+      cost: 40.0,
+      unit: 'ltr',
+      category: 'diary',
+    ),
   ];
 
   @override

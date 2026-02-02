@@ -18,6 +18,8 @@ import 'modules/inventory_transformation/domain/service/chicken_butchery_strateg
     as _i1061;
 import 'modules/inventory_transformation/domain/service/juice_strategy.dart'
     as _i520;
+import 'modules/inventory_transformation/domain/service/milk_transformation_strategy.dart'
+    as _i275;
 import 'modules/inventory_transformation/domain/service/transformation_configuration.dart'
     as _i788;
 import 'modules/inventory_transformation/domain/service/transformation_strategy.dart'
@@ -35,6 +37,10 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i788.ITransformationConfiguration>(
       () => _i788.VegetableConfiguration(),
       instanceName: 'vegetable_cutting',
+    );
+    gh.factory<_i788.ITransformationConfiguration>(
+      () => _i788.MilkConfiguration(),
+      instanceName: 'milk_transformation',
     );
     gh.factory<_i788.ITransformationConfiguration>(
       () => _i788.JuiceConfiguration(),
@@ -63,6 +69,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i788.ITransformationConfiguration>(
       () => _i788.WholeChickenConfiguration(),
       instanceName: 'whole_chicken',
+    );
+    gh.factory<_i228.ITransformationStrategy>(
+      () => _i275.MilkTransformationStrategy(
+        gh<_i788.ITransformationConfiguration>(
+          instanceName: 'milk_transformation',
+        ),
+      ),
+      instanceName: 'milk',
     );
     gh.factory<_i228.ITransformationStrategy>(
       () => _i1061.ChickenButcheryStrategy(
