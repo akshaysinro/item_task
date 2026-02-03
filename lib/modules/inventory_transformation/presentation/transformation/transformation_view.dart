@@ -87,52 +87,60 @@ class TransformationScreen extends StatelessWidget {
     Stockable item,
     List<StrategyMetadata> strategies,
   ) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+    return Semantics(
+      label: 'Inventory Item: ${item.name}',
+      container: true,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 12,
           ),
-        ],
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 12,
-        ),
-        title: Text(
-          item.name,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-        ),
-        subtitle: Text(
-          'Qty: ${item.quantity} ${item.unit} | Cost: \$${item.cost.toStringAsFixed(2)}',
-          style: TextStyle(color: Colors.grey[600]),
-        ),
-        trailing: Wrap(
-          spacing: 8,
-          children: strategies.map((metadata) {
-            return ElevatedButton.icon(
-              onPressed: () => _onTransformTapped(context, item, metadata),
-              icon: metadata.icon != null
-                  ? Icon(metadata.icon, size: 16)
-                  : const SizedBox.shrink(),
-              label: Text(metadata.label),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: metadata.color,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+          title: Text(
+            item.name,
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+          ),
+          subtitle: Text(
+            'Qty: ${item.quantity} ${item.unit} | Cost: \$${item.cost.toStringAsFixed(2)}',
+            style: TextStyle(color: Colors.grey[600]),
+          ),
+          trailing: Wrap(
+            spacing: 8,
+            children: strategies.map((metadata) {
+              return Semantics(
+                label: 'Transform ${item.name} using ${metadata.label}',
+                button: true,
+                child: ElevatedButton.icon(
+                  onPressed: () => _onTransformTapped(context, item, metadata),
+                  icon: metadata.icon != null
+                      ? Icon(metadata.icon, size: 16)
+                      : const SizedBox.shrink(),
+                  label: Text(metadata.label),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: metadata.color,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                  ),
                 ),
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-              ),
-            );
-          }).toList(),
+              );
+            }).toList(),
+          ),
         ),
       ),
     );

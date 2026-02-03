@@ -138,47 +138,54 @@ class _QuantitySelectionDialogState extends State<QuantitySelectionDialog> {
                 children: [
                   Expanded(
                     flex: 2,
-                    child: DropdownButtonFormField<YieldConfig>(
-                      value: _selectedYield,
-                      items: widget.strategy.yields
-                          .map(
-                            (y) => DropdownMenuItem(
-                              value: y,
-                              child: Text(
-                                y.name,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(fontSize: 13),
+                    child: Semantics(
+                      label: 'Target Yield Type Selection',
+                      container: true,
+                      child: DropdownButtonFormField<YieldConfig>(
+                        value: _selectedYield,
+                        items: widget.strategy.yields
+                            .map(
+                              (y) => DropdownMenuItem(
+                                value: y,
+                                child: Text(
+                                  y.name,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(fontSize: 13),
+                                ),
                               ),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (val) {
-                        setState(() => _selectedYield = val);
-                        _onTargetChanged(_targetController.text);
-                      },
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                            )
+                            .toList(),
+                        onChanged: (val) {
+                          setState(() => _selectedYield = val);
+                          _onTargetChanged(_targetController.text);
+                        },
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     flex: 1,
-                    child: TextField(
-                      controller: _targetController,
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'Weight',
-                        suffixText: _selectedYield?.unit ?? widget.unit,
-                        border: const OutlineInputBorder(),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 10,
+                    child: Semantics(
+                      label: 'Target Result Quantity Input',
+                      child: TextField(
+                        controller: _targetController,
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
                         ),
+                        decoration: InputDecoration(
+                          hintText: 'Weight',
+                          suffixText: _selectedYield?.unit ?? widget.unit,
+                          border: const OutlineInputBorder(),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                          ),
+                        ),
+                        onChanged: _onTargetChanged,
                       ),
-                      onChanged: _onTargetChanged,
                     ),
                   ),
                 ],
@@ -186,26 +193,33 @@ class _QuantitySelectionDialogState extends State<QuantitySelectionDialog> {
               const SizedBox(height: 16),
             ],
 
-            TextField(
-              controller: _controller,
-              enabled: !_isByResult,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
+            Semantics(
+              label: _isByResult
+                  ? 'Calculated Input Quantity'
+                  : 'Manual Input Quantity',
+              child: TextField(
+                controller: _controller,
+                enabled: !_isByResult,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                ],
+                decoration: InputDecoration(
+                  labelText: _isByResult
+                      ? 'Calculated Input'
+                      : 'Input Quantity',
+                  suffixText: widget.unit,
+                  errorText: _errorText,
+                  border: const OutlineInputBorder(),
+                  filled: _isByResult,
+                  fillColor: _isByResult ? Colors.blue.withOpacity(0.05) : null,
+                ),
+                autofocus: !_isByResult,
+                onSubmitted: (_) => _validateAndSubmit(),
+                onChanged: (_) => setState(() => _errorText = null),
               ),
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
-              ],
-              decoration: InputDecoration(
-                labelText: _isByResult ? 'Calculated Input' : 'Input Quantity',
-                suffixText: widget.unit,
-                errorText: _errorText,
-                border: const OutlineInputBorder(),
-                filled: _isByResult,
-                fillColor: _isByResult ? Colors.blue.withOpacity(0.05) : null,
-              ),
-              autofocus: !_isByResult,
-              onSubmitted: (_) => _validateAndSubmit(),
-              onChanged: (_) => setState(() => _errorText = null),
             ),
 
             if (!_isByResult) ...[
@@ -244,17 +258,25 @@ class _QuantitySelectionDialogState extends State<QuantitySelectionDialog> {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
-        ),
-        ElevatedButton(
-          onPressed: _validateAndSubmit,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Theme.of(context).primaryColor,
-            foregroundColor: Colors.white,
+        Semantics(
+          label: 'Cancel Transformation Button',
+          button: true,
+          child: TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
           ),
-          child: const Text('Transform'),
+        ),
+        Semantics(
+          label: 'Confirm Transformation Button',
+          button: true,
+          child: ElevatedButton(
+            onPressed: _validateAndSubmit,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).primaryColor,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Transform'),
+          ),
         ),
       ],
     );
@@ -274,29 +296,34 @@ class _ModeToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(6),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
-                  ),
-                ]
-              : null,
-        ),
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected ? Colors.blue : Colors.grey[600],
+    return Semantics(
+      label: 'Calculation Mode: $label',
+      selected: isSelected,
+      button: true,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(6),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 4,
+                    ),
+                  ]
+                : null,
+          ),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              color: isSelected ? Colors.blue : Colors.grey[600],
+            ),
           ),
         ),
       ),
